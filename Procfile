@@ -1,0 +1,1 @@
+worker: python PythonApplication1.py
