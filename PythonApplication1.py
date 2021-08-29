@@ -81,6 +81,7 @@ class VkBot:
 #parsing
     def pars_eldorado(self,itsFirstCall):
         #try:
+
             #f=open('PhonesConstant.txt', 'w+',  encoding='utf-8')
             print("\n--------------------------------------Eldorado-------------------------------------- \n")
             
@@ -93,13 +94,20 @@ class VkBot:
 
             for iter in range(1, 7):   
                 req=requests.get('https://www.eldorado.ru/c/smartfony/b/APPLE/?page=%i'%iter, headers=headers)
+                print("page %i--------------------------------------6"%iter)
+
+                if req.status_code==200:
+                    print('good connection')
+                else:
+                    print('bad connection. Unknown url')
 
                 b = BeautifulSoup(req.text, "html.parser")
                 costAndTags = b.find_all(attrs={"data-pc": "offer_price"})
                 ItemNameTags = b.find_all(attrs={"data-dy": "title"})
                 EstbBonus = b.find_all(attrs={"data-dy": "bonusListBlock"})
                 
-                print("page %i--------------------------------------6"%iter)
+                print (req.text)
+
                 for xx in range(len(EstbBonus)):
                     if ItemNameTags[xx].text.find('Apple iPhone')!=-1 and ('Yellow') not in ItemNameTags[xx].text: #or ItemNameTags[xx].text.find('Xiaomi')!=-1  or ItemNameTags[xx].text.find('Samsung')!=-1:
                         kolvotelephonov+=1
@@ -107,7 +115,7 @@ class VkBot:
                         costNoSpaces=''.join(costAndTags[xx].text.split()[:2])
                         clearName=ItemNameTags[xx].text.replace('Gb','GB')
                         clearName=clearName[:clearName.find('B')+1].replace('Смартфон ','').replace('\xa0',' ').replace('Xr','XR').replace('Xs','XS')
-                        dictOriginal[clearName]=costNoSpaces
+                        dictOriginal[clearName]=[costNoSpaces,'eldorado']
                     else:
                         continue
             
@@ -146,7 +154,7 @@ class VkBot:
                 realName=realName.replace('Xr','XR')
                 realName=realName.replace(' Apple','Apple')
                 realName=realName[:realName.find('B')+1]
-                dictOriginalMts[realName]=realCost
+                dictOriginalMts[realName]=[realCost,'mts']
 
         return dictOriginalMts
 def differ(x,y): #два словаря на входе
@@ -166,45 +174,46 @@ def differ(x,y): #два словаря на входе
         else:
             diff[k]=longest[0][k].split()[0]+ " {} 0".format(longest[1])
    
+def newdiff(x,y):
+    global diff
+    for iter in x:
+        if iter in y:
+            x=10
+
+    return
+#                         x =  {'Apple iPhone 11 128GB': '2134'}
+#                          {'Apple iPhone 11 128GB': ['zdxf','2134']}
+
 
 start_time = time.time()
 
 print("Server started")
 
 bot = VkBot(393369556)
+diff={}
+
+#--------------------------#1
 
 eldorado_iphones=bot.pars_eldorado(True)
 print('eldorado________________________________',eldorado_iphones,len(eldorado_iphones))
 
-mts_iphones=bot.pars_mts(True)
-print('mts________________________',mts_iphones,len(mts_iphones))
+#mts_iphones=bot.pars_mts(True)
+#print('mts________________________',mts_iphones,len(mts_iphones))
 
-#--------------------------#1
-diff={}
-differ([eldorado_iphones,'eldorado'],[mts_iphones, 'mts'])
-
-print('\n\n\neldor vs mts __________________________разница________________________________',diff,len(diff))
+#differ([eldorado_iphones,'eldorado'],[mts_iphones, 'mts'])
+#print('\n\n\neldor vs mts __________________________разница________________________________',diff,len(diff))
 
 
-citilink_iphones=pars_citilink()
-print('\nCitiLink________________________________',citilink_iphones,len(citilink_iphones))
-differ([diff,'oldd'],[citilink_iphones,'citilink'])
+#citilink_iphones=pars_citilink()
+#print('\nCitiLink________________________________',citilink_iphones,len(citilink_iphones))
 
-##_____________#2
-#for k in citilink_iphones:
-#    if k in diff:
-#        if int(diff[k].split()[0]) >= int(citilink_iphones[k]):  
-#            tempX=int(diff[k].split()[0])-int(citilink_iphones[k])
-#            diff[k]=citilink_iphones[k] + " citilink {}".format(tempX)
-#    else:
-#        diff[k]=citilink_iphones[k] + " citilink 0"
-
-print('\n\n(eldor vs mts) vs citilink __________________________разница________________________________',diff,len(diff))
+#differ([diff,'oldd'],[citilink_iphones,'citilink'])
+#print('\n\n(eldor vs mts) vs citilink __________________________разница________________________________',diff,len(diff))
 
 work_time=str(round(time.time() - start_time , 3))
 vk.method('messages.send', {'user_id': 393369556, 'message': work_time, 'random_id': 0})
-vk.method('messages.send', {'user_id': 393369556, 'message': diff.keys(), 'random_id': 0})
-vk.method('messages.send', {'user_id': 393369556, 'message': len(diff), 'random_id': 0})
+#vk.method('messages.send', {'user_id': 393369556, 'message': diff.keys(), 'random_id': 0})
+#vk.method('messages.send', {'user_id': 393369556, 'message': len(diff), 'random_id': 0})
 
 ids=[]
 myUsers=[]

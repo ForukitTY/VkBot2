@@ -29,6 +29,6 @@ def pars_citilink():
             realName=ItemNameTags[xx].text.replace('Gb','GB').replace('APPLE',' Apple')
             realName=realName[realName.find('Apple'):realName.find('GB')+2]
 
-            dictOriginalMvideo[realName]=realCost
+            dictOriginalMvideo[realName]=[realCost,'citilink']
 
     return dictOriginalMvideo
