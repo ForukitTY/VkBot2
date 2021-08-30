@@ -4,6 +4,7 @@ import time
 from bs4 import BeautifulSoup
 from vk_api.longpoll import *
 from Citilink_Apple import pars_citilink
+
 token2='cda923ac6d6cdbf05a2ba3b791f97869fc7f237f623c07bf93935e774ae23581fb35e7a8bba37dbf7e145'
 vk=vk_api.VkApi(token=token2)
 zxc=VkLongPoll(vk)
@@ -21,7 +22,6 @@ class VkBot:
         self._USERNAME = vk.method('users.get',{'user_ids':user_id})[0]['first_name']
         self._COMMANDS = ["ПРИВЕТ", "ПОГОДА", "ПОКА", "СТАРТ"]
         print('Указанный город для id %i: '%user_id, self._USER_CITY)
-
     def _clean_all_tag_from_str(self, string_line): #приходит в формате Tag
 
         result = ""
@@ -36,7 +36,6 @@ class VkBot:
                 if i == ">":
                     not_skip = True
         return result
-
 #firstly we need to know what the command said user
     def new_message(self, message):
 
@@ -65,7 +64,6 @@ class VkBot:
 
         else: 
             return "\nЧтобы узнать погоду напиши погода 'свой город'"
-
 #Weather
     def _get_weather(self, city):
         request = requests.get("https://sinoptik.com.ru/погода-" + city.lower())
@@ -80,47 +78,46 @@ class VkBot:
         return 'Сегодня в %t: %m \nСейчас ощущается как: %c'%(city.title(),min_and_maxWeath,currentWeather)
 #parsing
     def pars_eldorado(self,itsFirstCall):
-        #try:
-
-            #f=open('PhonesConstant.txt', 'w+',  encoding='utf-8')
-            print("\n--------------------------------------Eldorado-------------------------------------- \n")
+    #try:
+        #f=open('PhonesConstant.txt', 'w+',  encoding='utf-8')
+        print("\n--------------------------------------Eldorado-------------------------------------- \n")
             
-            if itsFirstCall == False:
-                return 'тут будем сравнивать и обновлять в эльдорадо'
+        if itsFirstCall == False:
+            return 'тут будем сравнивать и обновлять в эльдорадо'
             
-            dictOriginal={}
-            kolvotelephonov=0
-            headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.135 YaBrowser/21.6.3.757 Yowser/2.5 Safari/537.36'}    
+        dictOriginal={}
+        kolvotelephonov=0
+        headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.135 YaBrowser/21.6.3.757 Yowser/2.5 Safari/537.36'}    
 
-            for iter in range(1, 7):   
-                req=requests.get('https://www.eldorado.ru/c/smartfony/b/APPLE/?page=%i'%iter, headers=headers)
-                print("page %i--------------------------------------6"%iter)
+        for iter in range(1, 7):   
+            req=requests.get('https://www.eldorado.ru/c/smartfony/b/APPLE/?page=%i'%iter, headers=headers)
+            req.encoding = 'utf-8'
+            print("page %i--------------------------------------6"%iter)
+            if req.status_code==200:
+                print('good connection')
+            else:
+                print('bad connection. Unknown url')
+            print(req.headers)
 
-                if req.status_code==200:
-                    print('good connection')
+            b = BeautifulSoup(req.text, "html.parser")
+            costAndTags = b.find_all(attrs={"data-pc": "offer_price"})
+            ItemNameTags = b.find_all(attrs={"data-dy": "title"})
+            EstbBonus = b.find_all(attrs={"data-dy": "bonusListBlock"})
+            
+            #print (req.text)
+            for xx in range(len(EstbBonus)):
+                if ItemNameTags[xx].text.find('Apple iPhone')!=-1 and ('Yellow') not in ItemNameTags[xx].text: #or ItemNameTags[xx].text.find('Xiaomi')!=-1  or ItemNameTags[xx].text.find('Samsung')!=-1:
+                    kolvotelephonov+=1
+                    #if itsFirstCall==True:
+                    costNoSpaces=''.join(costAndTags[xx].text.split()[:2])
+                    clearName=ItemNameTags[xx].text.replace('Gb','GB')
+                    clearName=clearName[:clearName.find('B')+1].replace('Смартфон ','').replace('\xa0',' ').replace('Xr','XR').replace('Xs','XS')
+                    dictOriginal[clearName]=[costNoSpaces,'eldorado']
                 else:
-                    print('bad connection. Unknown url')
-
-                b = BeautifulSoup(req.text, "html.parser")
-                costAndTags = b.find_all(attrs={"data-pc": "offer_price"})
-                ItemNameTags = b.find_all(attrs={"data-dy": "title"})
-                EstbBonus = b.find_all(attrs={"data-dy": "bonusListBlock"})
-                
-                print (req.text)
-
-                for xx in range(len(EstbBonus)):
-                    if ItemNameTags[xx].text.find('Apple iPhone')!=-1 and ('Yellow') not in ItemNameTags[xx].text: #or ItemNameTags[xx].text.find('Xiaomi')!=-1  or ItemNameTags[xx].text.find('Samsung')!=-1:
-                        kolvotelephonov+=1
-                        #if itsFirstCall==True:
-                        costNoSpaces=''.join(costAndTags[xx].text.split()[:2])
-                        clearName=ItemNameTags[xx].text.replace('Gb','GB')
-                        clearName=clearName[:clearName.find('B')+1].replace('Смартфон ','').replace('\xa0',' ').replace('Xr','XR').replace('Xs','XS')
-                        dictOriginal[clearName]=[costNoSpaces,'eldorado']
-                    else:
-                        continue
+                    continue
             
-            return dictOriginal
-            #self.pars(False)
+        return dictOriginal
+        #self.pars(False)
 
 #mts
     def pars_mts(self,itsFirstCall):
@@ -157,6 +154,7 @@ class VkBot:
                 dictOriginalMts[realName]=[realCost,'mts']
 
         return dictOriginalMts
+
 def differ(x,y): #два словаря на входе
     global diff
     longest=x if len(x[0])>len(y[0]) else y
@@ -174,28 +172,31 @@ def differ(x,y): #два словаря на входе
         else:
             diff[k]=longest[0][k].split()[0]+ " {} 0".format(longest[1])
    
-def newdiff(x,y):
+def newdiff(x):
     global diff
     for iter in x:
-        if iter in y:
-            x=10
+        if iter in diff:
+            if int(x[iter][0]) <= int(diff[iter][0]):
+                diff[iter]=[x[iter][0],x[iter][1]]
 
-    return
-#                         x =  {'Apple iPhone 11 128GB': '2134'}
-#                          {'Apple iPhone 11 128GB': ['zdxf','2134']}
-
+        else:
+            diff[iter]=x[iter]
+    print ('какая-то фильтрация произошла')
+    return diff
+#                       x = {'Apple iPhone 11 128GB': ['2134','eldor']}
+#                         old x =  {'Apple iPhone 11 128GB': '2134'}
 
 start_time = time.time()
-
 print("Server started")
-
 bot = VkBot(393369556)
 diff={}
 
 #--------------------------#1
-
 eldorado_iphones=bot.pars_eldorado(True)
+diff=eldorado_iphones
 print('eldorado________________________________',eldorado_iphones,len(eldorado_iphones))
+print('\n______________newdiff_______________________',newdiff(eldorado_iphones))
+
 
 #mts_iphones=bot.pars_mts(True)
 #print('mts________________________',mts_iphones,len(mts_iphones))
@@ -206,8 +207,6 @@ print('eldorado________________________________',eldorado_iphones,len(eldorado_i
 
 #citilink_iphones=pars_citilink()
 #print('\nCitiLink________________________________',citilink_iphones,len(citilink_iphones))
-
-#differ([diff,'oldd'],[citilink_iphones,'citilink'])
 #print('\n\n(eldor vs mts) vs citilink __________________________разница________________________________',diff,len(diff))
 
 work_time=str(round(time.time() - start_time , 3))
