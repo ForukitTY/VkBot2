@@ -155,22 +155,6 @@ class VkBot:
 
         return dictOriginalMts
 
-def differ(x,y): #два словаря на входе
-    global diff
-    longest=x if len(x[0])>len(y[0]) else y
-    short=x if longest==y else y
-   
-    for k in longest[0]:
-        if k in short[0]:
-            if int(longest[0][k].split()[0]) >= int(short[0][k].split()[0]):
-                tempX=int(longest[0][k].split()[0])-int(short[0][k].split()[0])
-            
-                diff[k]=short[0][k].split()[0] + " {} {}".format(short[1],tempX)
-            else:
-                tempX=int(short[0][k].split()[0])-int(longest[0][k].split()[0])
-                diff[k]=longest[0][k].split()[0]+" {} {}".format(longest[1], tempX)
-        else:
-            diff[k]=longest[0][k].split()[0]+ " {} 0".format(longest[1])
    
 def newdiff(x):
     global diff
@@ -194,20 +178,18 @@ diff={}
 #--------------------------#1
 eldorado_iphones=bot.pars_eldorado(True)
 diff=eldorado_iphones
+mts_iphones=bot.pars_mts(True)
+citilink_iphones=pars_citilink()
 print('eldorado________________________________',eldorado_iphones,len(eldorado_iphones))
-print('\n______________newdiff_______________________',newdiff(eldorado_iphones))
 
+print('mts________________________',mts_iphones,len(mts_iphones))
 
-#mts_iphones=bot.pars_mts(True)
-#print('mts________________________',mts_iphones,len(mts_iphones))
+print('\nCitiLink________________________________',citilink_iphones,len(citilink_iphones))
 
-#differ([eldorado_iphones,'eldorado'],[mts_iphones, 'mts'])
-#print('\n\n\neldor vs mts __________________________разница________________________________',diff,len(diff))
+print('\n______________newdiff_______________________1',newdiff(eldorado_iphones),len(diff))
+print('\n______________newdiff_______________________2',newdiff(mts_iphones),len(diff))
+print('\n______________newdiff_______________________3',newdiff(citilink_iphones),len(diff))
 
-
-#citilink_iphones=pars_citilink()
-#print('\nCitiLink________________________________',citilink_iphones,len(citilink_iphones))
-#print('\n\n(eldor vs mts) vs citilink __________________________разница________________________________',diff,len(diff))
 
 work_time=str(round(time.time() - start_time , 3))
 vk.method('messages.send', {'user_id': 393369556, 'message': work_time, 'random_id': 0})
