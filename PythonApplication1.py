@@ -60,7 +60,7 @@ class VkBot:
         #Parser
         elif message.upper() == self._COMMANDS[3]:
              
-             return self.pars_mts(False)
+             return 'так давай пока без этой функции обойдемся'#self.pars_mts(False)
 
         else: 
             return "\nЧтобы узнать погоду напиши погода 'свой город'"
@@ -75,7 +75,7 @@ class VkBot:
         min_and_maxWeath = min_and_maxWeath.replace('макс.', 'Максимум днем')
         min_and_maxWeath = min_and_maxWeath.replace('мин.', 'Минимум днем')
         currentWeather = self._clean_all_tag_from_str(b.select('.table__col.current .table__felt')[0])
-        return 'Сегодня в %t: %m \nСейчас ощущается как: %c'%(city.title(),min_and_maxWeath,currentWeather)
+        return f'Сегодня в {city.title()}: {min_and_maxWeath} \nСейчас ощущается как: {currentWeather}'
 #parsing
     def pars_eldorado(self,itsFirstCall):
     #try:
@@ -91,7 +91,7 @@ class VkBot:
 
         for iter in range(1, 7):   
             req=requests.get('https://www.eldorado.ru/c/smartfony/b/APPLE/?page=%i'%iter, headers=headers)
-            req.encoding = 'utf-8'
+            req.encoding = 'utf-8'	
             print("page %i--------------------------------------6"%iter)
             if req.status_code==200:
                 print('good connection')
@@ -162,7 +162,6 @@ def newdiff(x):
         if iter in diff:
             if int(x[iter][0]) <= int(diff[iter][0]):
                 diff[iter]=[x[iter][0],x[iter][1]]
-
         else:
             diff[iter]=x[iter]
     print ('какая-то фильтрация произошла')
@@ -176,23 +175,23 @@ bot = VkBot(393369556)
 diff={}
 
 #--------------------------#1
-eldorado_iphones=bot.pars_eldorado(True)
-diff=eldorado_iphones
-mts_iphones=bot.pars_mts(True)
+#eldorado_iphones=bot.pars_eldorado(True)
+#diff=eldorado_iphones
+#mts_iphones=bot.pars_mts(True)
 citilink_iphones=pars_citilink()
-print('eldorado________________________________',eldorado_iphones,len(eldorado_iphones))
+diff = citilink_iphones
+#print('eldorado________________________________',eldorado_iphones,len(eldorado_iphones))
 
-print('mts________________________',mts_iphones,len(mts_iphones))
-
+#print('mts________________________',mts_iphones,len(mts_iphones))
 print('\nCitiLink________________________________',citilink_iphones,len(citilink_iphones))
 
-print('\n______________newdiff_______________________1',newdiff(eldorado_iphones),len(diff))
-print('\n______________newdiff_______________________2',newdiff(mts_iphones),len(diff))
+#print('\n______________newdiff_______________________1',newdiff(eldorado_iphones),len(diff))
+#print('\n______________newdiff_______________________2',newdiff(mts_iphones),len(diff))
 print('\n______________newdiff_______________________3',newdiff(citilink_iphones),len(diff))
 
 
-work_time=str(round(time.time() - start_time , 3))
-vk.method('messages.send', {'user_id': 393369556, 'message': work_time, 'random_id': 0})
+#work_time=str(round(time.time() - start_time , 3))
+#vk.method('messages.send', {'user_id': 393369556, 'message': work_time, 'random_id': 0})
 #vk.method('messages.send', {'user_id': 393369556, 'message': diff.keys(), 'random_id': 0})
 #vk.method('messages.send', {'user_id': 393369556, 'message': len(diff), 'random_id': 0})
 
@@ -203,13 +202,13 @@ for event in zxc.listen():
         if event.to_me:
             UserName=vk.method('users.get',{'user_ids':event.user_id})[0]['first_name']+' '+vk.method('users.get',{'user_ids':event.user_id})[0]['last_name']
             if ids.count(event.user_id)==1:
-                print(' old user. For me by:%u id:%i'%(UserName,event.user_id))
+                print(f' old user. For me by:{bot._USERNAME} id:{event.user_id}')
                 print('| New message:', event.text)
                 vk.method('messages.send', {'user_id': bot._USER_ID, 'message': bot.new_message(event.text), 'random_id': 0})
-            else:       
+            else:
                 ids.append(event.user_id)
                 bot = VkBot(event.user_id)
                 myUsers.append(bot) #решил по приколу сохранять юзеров
-                print('new user. For me by:%u id:%i'%(UserName,event.user_id))
+                print(f'new user. For me by:{bot._USERNAME} id:{event.user_id}')
                 print('| New message:', event.text)
                 vk.method('messages.send', {'user_id': event.user_id, 'message': bot.new_message(event.text), 'random_id': 0})
