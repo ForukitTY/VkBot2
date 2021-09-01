@@ -1,5 +1,5 @@
 import requests
-import time
+import time,random
 from bs4 import BeautifulSoup
 
 def pars_citilink():
@@ -10,11 +10,15 @@ def pars_citilink():
 	print("\n______________________CitiLink____________________")
 	for iter in range(1, 3):   
 		print("page "+str(iter)+"-----------------------------2")
+		xax=random.uniform(3,7)
+		time.sleep(xax)
+		print(xax)
 
 		req=requests.get('https://www.citilink.ru/catalog/smartfony/APPLE/?p=%i'%iter,headers=headers,proxies=prox[iter-1])
-		time.sleep(6)
+		
 		sad=requests.get('https://2ip.ru/', proxies=prox[iter-1])
 		print(req.status_code,'\n',req.headers, '\n', req.cookies.get_dict() )
+		
 		b = BeautifulSoup(req.text, "html.parser")
 		costAndTags = b.find_all(attrs={'class': 'ProductCardHorizontal__price_current-price'})
 		ItemNameTags = b.find_all(attrs={"class": "ProductCardHorizontal__title Link js--Link Link_type_default"})
