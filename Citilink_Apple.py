@@ -1,17 +1,20 @@
 import requests
+import time
 from bs4 import BeautifulSoup
 
 def pars_citilink():
 	dictOriginalMvideo={}
 	kolvotelephonov=0
-	headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'}
-	prox={'http':'178.238.229.236:80'}
+	headers={'User-Agent':'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 OPR/77.0.4054.203'}
+	prox=[{'http':'http://162.144.57.157:80'}, {'http':'http://94.230.35.108:80'}]
 	print("\n______________________CitiLink____________________")
 	for iter in range(1, 3):   
 		print("page "+str(iter)+"-----------------------------2")
 
-		req=requests.get('https://www.citilink.ru/catalog/smartfony/APPLE/?p=%i'%iter,headers=headers,proxies=prox)
-		print(req.status_code,'\n',req.headers)
+		req=requests.get('https://www.citilink.ru/catalog/smartfony/APPLE/?p=%i'%iter,headers=headers,proxies=prox[iter-1])
+		time.sleep(6)
+		sad=requests.get('https://2ip.ru/', proxies=prox[iter-1])
+		print(req.status_code,'\n',req.headers, '\n', req.cookies.get_dict() )
 		b = BeautifulSoup(req.text, "html.parser")
 		costAndTags = b.find_all(attrs={'class': 'ProductCardHorizontal__price_current-price'})
 		ItemNameTags = b.find_all(attrs={"class": "ProductCardHorizontal__title Link js--Link Link_type_default"})
