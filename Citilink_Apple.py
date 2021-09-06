@@ -12,39 +12,44 @@ def pars_citilink():
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 OPR/75.0.3969.243'},
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 OPR/76.0.4017.123'}]
 	prox=[{'http':'http://184.178.172.13:15311'},
-	   {'http':'http://46.237.255.14:8080'},
-	   {'http':'http://157.155.103.139:8080'},
+	   {'http':'http://184.178.172.13:15311'},
+	   {'http':'http://139.198.179.174:3128'},
 	   {'http':'http://253.6.201.182:53281'},
 	   {'http':'http://250.38.65.0:999'},
 	   {'http':'http://105.123.68.183:8080'}]
 	print("\n______________________CitiLink____________________")
-	for zalupe in range(0,6):
-		for iter in range(1, 3):   
-			print("page "+str(iter)+"-----------------------------2")
-			xax=random.uniform(2,5)
-			print(xax)
-			time.sleep(xax)
+	#for zalupe in range(0,6):
+	for iter in range(1, 3):   
+		print("page "+str(iter)+"-----------------------------2")
+		xax=random.uniform(1,5)
+		print(xax)
+		time.sleep(xax)
 
-			req=requests.get('https://www.citilink.ru/catalog/smartfony/APPLE/?p=%i'%iter,headers=head[zalupe],proxies=prox[0])
+		req=requests.get(f'https://www.citilink.ru/catalog/smartfony/?f=discount.any%2Crating.any%2Capple%2Chonor%2Csamsung%2Crating.any%2Capple%2Csamsung&p={iter}',headers=head[iter],proxies=prox[0])
+
+		print(req.status_code,'\n', '\n') #req.cookies.get_dict() )
 		
-			print(req.status_code,'\n',req._content_consumed, '\n') #req.cookies.get_dict() )
-		
-			b = BeautifulSoup(req.text, "html.parser")
-			costAndTags = b.find_all(attrs={'class': 'ProductCardHorizontal__price_current-price'})
-			ItemNameTags = b.find_all(attrs={"class": "ProductCardHorizontal__title Link js--Link Link_type_default"})
+		b = BeautifulSoup(req.text, "html.parser")
+		costAndTags = b.find_all(attrs={'class': 'ProductCardHorizontal__price_current-price js--ProductCardHorizontal__price_current-price'})
+		print(costAndTags[0].text)
+		ItemNameTags = b.find_all(attrs={"class": "ProductCardHorizontal__header-block"})
+		print(len(ItemNameTags))
 
-			for xx in range(len(costAndTags)):
-				if ItemNameTags[xx].text.find('желтый')!=-1:
-					continue
-				realCost=''
-				kolvotelephonov+=1
-				for index in costAndTags[xx].text:
-					if index.isdigit():
-						realCost+=index
+		for xx in range(len(costAndTags)):
+			if ItemNameTags[xx].text.find('желтый')!=-1:
+				continue
+			realCost=''
+			kolvotelephonov+=1
 
-				realName=ItemNameTags[xx].text.replace('Gb','GB').replace('APPLE',' Apple')
-				realName=realName[realName.find('Apple'):realName.find('GB')+2]
+			realCost=''.join(costAndTags[xx].text.split())
+			if int(realCost)<30000:
+				continue
 
-				dictOriginalMvideo[realName]=[realCost,'citilink']
+			realName=ItemNameTags[xx].text[0:ItemNameTags[xx].text.find('Gb')+2]
+			realName=realName.replace('Gb','GB').replace('APPLE','Apple').replace('SAMSUNG','Samsung').replace('HONOR','Honor')
+			
+			print(f'{kolvotelephonov} {realName} {realCost}')
+			dictOriginalMvideo[realName]=[realCost,'citilink']
+
 
 	return dictOriginalMvideo

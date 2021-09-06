@@ -103,7 +103,7 @@ class VkBot:
             costAndTags = b.find_all(attrs={"data-pc": "offer_price"})
             ItemNameTags = b.find_all(attrs={"data-dy": "title"})
             EstbBonus = b.find_all(attrs={"data-dy": "bonusListBlock"})
-            
+
             #print (req.text)
             for xx in range(len(EstbBonus)):
                 if ItemNameTags[xx].text.find('Apple iPhone')!=-1 and ('Yellow') not in ItemNameTags[xx].text: #or ItemNameTags[xx].text.find('Xiaomi')!=-1  or ItemNameTags[xx].text.find('Samsung')!=-1:
