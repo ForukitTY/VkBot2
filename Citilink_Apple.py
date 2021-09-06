@@ -11,7 +11,7 @@ def pars_citilink():
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 OPR/75.0.3969.243'},
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 OPR/75.0.3969.243'},
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 OPR/76.0.4017.123'}]
-	prox=[{'http':'http://93.94.182.225:8080'},
+	prox=[{'http':'http://101.53.158.48:9200'},
 	   {'http':'http://46.237.255.14:8080'},
 	   {'http':'http://157.155.103.139:8080'},
 	   {'http':'http://253.6.201.182:53281'},
@@ -25,9 +25,9 @@ def pars_citilink():
 			print(xax)
 			time.sleep(xax)
 
-			req=requests.get('https://www.citilink.ru/catalog/smartfony/APPLE/?p=%i'%iter,headers=head[zalupe],proxies=prox[zalupe])
+			req=requests.get('https://www.citilink.ru/catalog/smartfony/APPLE/?p=%i'%iter,headers=head[zalupe],proxies=prox[0])
 		
-			print(req.status_code,'\n',req.headers, '\n') #req.cookies.get_dict() )
+			print(req.status_code,'\n',req._content_consumed, '\n') #req.cookies.get_dict() )
 		
 			b = BeautifulSoup(req.text, "html.parser")
 			costAndTags = b.find_all(attrs={'class': 'ProductCardHorizontal__price_current-price'})
