@@ -11,14 +11,7 @@ def pars_citilink():
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 OPR/75.0.3969.243'},
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36 OPR/75.0.3969.243'},
 		  {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36 OPR/76.0.4017.123'}]
-	head={
-        'Connection':'keep-alive',
-
-
-        'Upgrade-Insecure-Requests':'1',
-
-        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 OPR/76.0.4017.94'
-		}
+	head={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.43 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36 OPR/76.0.4017.94', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
 
 	prox=[{'http':'http://217.29.53.64:33165', 'https':'https://217.29.53.64:33165'}, {'http':'socks5://20.182.253.244:11857','https': 'socks5://20.182.253.244:11857'}, {'http':'http://45.90.216.166:10001','https': 'https://45.90.216.166:10001'}]
 	print("\n______________________CitiLink____________________")
@@ -29,7 +22,7 @@ def pars_citilink():
 		print(xax)
 		time.sleep(xax)
 
-		req=requests.get(f'https://www.citilink.ru/catalog/smartfony/?f=discount.any%2Crating.any%2Capple%2Chonor%2Csamsung%2Crating.any%2Capple%2Csamsung&p={iter}',headers=agents[2], timeout=35)
+		req=requests.get(f'https://www.citilink.ru/catalog/smartfony/?f=discount.any%2Crating.any%2Capple%2Chonor%2Csamsung%2Crating.any%2Capple%2Csamsung&p={iter}',headers=head, timeout=35)
 		#req=requests.get(f'https://2ip.ua/ru/',headers=agents[2], timeout=37)
 		costAndTags = BeautifulSoup(req.text, "html.parser").find_all(attrs={'class': 'ipblockgradient'})
 
